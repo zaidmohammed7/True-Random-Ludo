@@ -1,0 +1,230 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   LudoBoard.module.css — Strict CSS Foundation
+   15×15 grid, square board, no game logic, no tokens.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Outer wrapper: centers the board on-screen ─────────────────────── */
+.boardWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /*
+   * Use the SMALLER of the two viewport dimensions so the board always
+   * fits without scrolling on both portrait and landscape screens.
+   */
+    width: min(88vw, 88vh, 660px);
+    height: min(88vw, 88vh, 660px);
+    /* explicit height = width → square wrapper */
+}
+
+/* ── 2. Board grid ──────────────────────────────────────────────────────── */
+.board {
+    /*
+   * Critical fix for oval cells:
+   *   - width / height must both be set to the same value (via the wrapper).
+   *   - aspect-ratio: 1/1 enforces squareness even under flex/grid parents.
+   *   - grid-template-rows must mirror grid-template-columns so every
+   *     cell ends up with equal width AND equal height.
+   */
+    display: grid;
+    position: relative;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(15, 1fr);
+    /* ← this is the key anti-oval rule */
+
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    /* absolute last-resort guard */
+
+    border: 3px solid #2c3e50;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.06);
+    background: #ecf0f1;
+}
+
+/* ── 3. Base cell ───────────────────────────────────────────────────────── */
+.cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    /*
+   * These two lines prevent the cell from breaking out of its grid track
+   * and distorting other cells — they are required alongside the grid rules
+   * above to guarantee perfect squares everywhere.
+   */
+    min-width: 0;
+    min-height: 0;
+
+    /* Visible grid line between cells */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+
+    /* Default / unclassified cell */
+    background: #dce0e3;
+}
+
+/* ── 4. Yard quadrants (6×6 corner blocks) ──────────────────────────────── */
+/*
+ * Board layout (0-indexed):
+ *   Blue   → rows 0-5,  cols 0-5   (top-left)
+ *   Red    → rows 0-5,  cols 9-14  (top-right)
+ *   Yellow → rows 9-14, cols 0-5   (bottom-left)
+ *   Green  → rows 9-14, cols 9-14  (bottom-right)
+ */
+.yard_blue {
+    background: #2a6097;
+}
+
+.yard_red {
+    background: #b03028;
+}
+
+.yard_yellow {
+    background: #c9860e;
+}
+
+.yard_green {
+    background: #1a7a41;
+}
+
+.yardSlot {
+    inset: 14%;
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    z-index: 2;
+}
+
+.slot_blue {
+    background: #5dade2;
+    border-color: #2980b9;
+}
+
+.slot_red {
+    background: #ec7063;
+    border-color: #c0392b;
+}
+
+.slot_green {
+    background: #58d68d;
+    border-color: #1e8449;
+}
+
+.slot_yellow {
+    background: #f7dc6f;
+    border-color: #d68910;
+}
+
+/* ── 4b. Yard White Boxes (overlaying grids in the yards) ──────────────── */
+.yardWhiteBox {
+    background: white;
+    border-radius: 24px;
+    grid-row: auto;
+    grid-column: auto;
+    z-index: 1;
+    pointer-events: none;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 4%;
+}
+
+.top_left_white {
+    grid-area: 2 / 2 / 6 / 6;
+}
+
+.top_right_white {
+    grid-area: 2 / 11 / 6 / 15;
+}
+
+.bottom_left_white {
+    grid-area: 11 / 2 / 15 / 6;
+}
+
+.bottom_right_white {
+    grid-area: 11 / 11 / 15 / 15;
+}
+
+/* ── 5. Walkway (3-wide corridor) cells ─────────────────────────────────── */
+/*
+ * The walkway is the cross-shaped path formed by:
+ *   rows 6-8 for all columns, and cols 6-8 for all rows,
+ *   MINUS the yards and the center cell.
+ */
+.trackCell {
+    background: #f5f0e8;
+}
+
+/* ── 6. Home column cells (colored arms converging on center) ────────────── */
+/*
+ * Home columns:
+ *   Blue   → row 7, cols 1-5
+ *   Red    → col 7, rows 1-5
+ *   Yellow → col 7, rows 9-13
+ *   Green  → row 7, cols 9-13
+ */
+.home_blue {
+    background: #2a6097;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.home_red {
+    background: #b03028;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.home_yellow {
+    background: #c9860e;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.home_green {
+    background: #1a7a41;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ── 7. Safe / star squares ─────────────────────────────────────────────── */
+.safeCell {
+    background: #faed98 !important;
+}
+
+.starIcon {
+    position: absolute;
+    width: 54%;
+    height: 54%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── 8. Center home cell (7,7) — conic-gradient triangle pattern ─────────── */
+.centerCell {
+    background: #fff;
+    padding: 0;
+}
+
+/*
+ * The center cell is divided into four colored triangles pointing inward,
+ * matching each player's color. This is achieved with a conic-gradient.
+ */
+.centerInner {
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(from 45deg,
+            #1a7a41 0deg 90deg,
+            /* green  — right  */
+            #c9860e 90deg 180deg,
+            /* yellow — bottom */
+            #2a6097 180deg 270deg,
+            /* blue   — left   */
+            #b03028 270deg 360deg
+            /* red    — top    */
+        );
+}

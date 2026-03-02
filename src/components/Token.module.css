@@ -1,0 +1,80 @@
+.token {
+    width: 70%;
+    height: 70%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--token-color) 80%, white), var(--token-color));
+    border: 3px solid var(--token-border);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    cursor: default;
+    z-index: 5;
+}
+
+.tokenInner {
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.token.valid {
+    cursor: pointer;
+    animation: tokenPop 0.6s ease infinite alternate;
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.9),
+        0 0 12px rgba(255, 255, 255, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.token.valid:hover {
+    transform: scale(1.2);
+    box-shadow:
+        0 0 0 3px white,
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.token.atHome {
+    box-shadow:
+        0 0 0 2px gold,
+        0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.pulse {
+    position: absolute;
+    width: 130%;
+    height: 130%;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    animation: pulseRing 1s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes tokenPop {
+    from {
+        transform: scale(1.05);
+    }
+
+    to {
+        transform: scale(1.15);
+    }
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}

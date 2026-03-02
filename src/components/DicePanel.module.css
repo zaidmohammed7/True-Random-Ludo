@@ -1,0 +1,204 @@
+.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 20px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    min-width: 220px;
+    max-width: 280px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Player badge ───────────────────────────────────────────────────────────── */
+.playerBadge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.playerDot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--player-color);
+    box-shadow: 0 0 8px var(--player-color);
+    animation: dotPulse 1.5s ease infinite;
+}
+
+.playerLabel {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--player-color);
+    letter-spacing: 0.02em;
+}
+
+/* ─── Turn order pips ────────────────────────────────────────────────────────── */
+.turnOrder {
+    display: flex;
+    gap: 8px;
+}
+
+.playerPip {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--pip-color);
+    opacity: 0.35;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.activePip {
+    opacity: 1;
+    transform: scale(1.4);
+    box-shadow: 0 0 6px var(--pip-color);
+}
+
+/* ─── Dice ───────────────────────────────────────────────────────────────────── */
+.diceContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.4s ease;
+}
+
+.diceContainer.rolling {
+    animation: diceRoll 0.4s ease;
+}
+
+.diceFace {
+    font-size: clamp(48px, 8vw, 72px);
+    line-height: 1;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+    user-select: none;
+}
+
+.diceNumber {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.1em;
+}
+
+/* ─── Warnings & badges ──────────────────────────────────────────────────────── */
+.sixsWarning {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #e67e22;
+    background: rgba(230, 126, 34, 0.12);
+    border: 1px solid rgba(230, 126, 34, 0.3);
+    border-radius: 8px;
+    padding: 6px 10px;
+    text-align: center;
+}
+
+.extraTurnBadge {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #f1c40f;
+    background: rgba(241, 196, 15, 0.15);
+    border: 1px solid rgba(241, 196, 15, 0.4);
+    border-radius: 20px;
+    padding: 6px 14px;
+    animation: badgePop 0.3s ease;
+}
+
+.message {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    line-height: 1.4;
+    min-height: 2em;
+}
+
+/* ─── Roll button ────────────────────────────────────────────────────────────── */
+.rollBtn {
+    padding: 12px 28px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--player-color), color-mix(in srgb, var(--player-color) 70%, black));
+    color: white;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--player-color) 40%, transparent);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    letter-spacing: 0.03em;
+    width: 100%;
+}
+
+.rollBtn:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--player-color) 50%, transparent);
+}
+
+.rollBtn:active:not(.disabled) {
+    transform: translateY(0);
+}
+
+.rollBtn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
+
+/* ─── Phase hint ─────────────────────────────────────────────────────────────── */
+.phaseHint {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────────── */
+@keyframes diceRoll {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    25% {
+        transform: rotate(-20deg) scale(0.9);
+    }
+
+    50% {
+        transform: rotate(15deg) scale(1.1);
+    }
+
+    75% {
+        transform: rotate(-10deg) scale(0.95);
+    }
+
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes dotPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 6px var(--player-color);
+    }
+
+    50% {
+        box-shadow: 0 0 14px var(--player-color), 0 0 4px white;
+    }
+}
+
+@keyframes badgePop {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

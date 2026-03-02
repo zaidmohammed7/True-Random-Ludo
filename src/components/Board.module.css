@@ -1,0 +1,170 @@
+/* ─── Board wrapper & grid ──────────────────────────────────────────────────── */
+.boardWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: repeat(15, 1fr);
+  /* Perfect square board */
+  width: min(88vw, 88vh, 640px);
+  aspect-ratio: 1 / 1;
+  border: 3px solid #2c3e50;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  background: #ecf0f1;
+}
+
+/* ─── Base cell (every cell is a perfect square via aspect-ratio on the board) */
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  /* Ensure cells never grow taller than wide */
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ─── Walkway / track cells ─────────────────────────────────────────────────── */
+.trackCell {
+  background: #f5f0e8;
+}
+
+/* ─── Empty corner cells (under the yard quadrant outer border) ─────────────── */
+.emptyCell {
+  background: #dce0e3;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Yard quadrant colors ──────────────────────────────────────────────────── */
+.yard_blue {
+  background: #2980b9;
+}
+
+.yard_red {
+  background: #c0392b;
+}
+
+.yard_yellow {
+  background: #d68910;
+}
+
+.yard_green {
+  background: #1e8449;
+}
+
+/* ─── Home column (colored arms of the cross) ───────────────────────────────── */
+.home_blue {
+  background: #2980b9;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.home_red {
+  background: #c0392b;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.home_yellow {
+  background: #d68910;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.home_green {
+  background: #1e8449;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ─── Center home triangle ──────────────────────────────────────────────────── */
+.centerCell {
+  background: white;
+  padding: 0;
+}
+
+.centerInner {
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(from 45deg,
+      #1e8449 0deg 90deg,
+      /* green  — right  */
+      #d68910 90deg 180deg,
+      /* yellow — bottom */
+      #2980b9 180deg 270deg,
+      /* blue   — left   */
+      #c0392b 270deg 360deg
+      /* red    — top    */
+    );
+}
+
+/* ─── Safe square star ──────────────────────────────────────────────────────── */
+.cell[data-safe] {
+  background: #faed98 !important;
+}
+
+.star {
+  position: absolute;
+  width: 55%;
+  height: 55%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Yard slot grid (4 circular slot decorations under tokens) ─────────────── */
+.yardSlotGrid {
+  position: absolute;
+  inset: 15%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ─── Individual token dot ──────────────────────────────────────────────────── */
+.tokenDotVisual {
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%,
+      color-mix(in srgb, var(--tc) 60%, white),
+      var(--tc) 60%);
+  border: 2px solid var(--tb);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  transition: width 0.2s ease, height 0.2s ease, transform 0.12s ease;
+  aspect-ratio: 1 / 1;
+}
+
+/* Highlight ring for valid-move tokens */
+.tokenValid>div {
+  animation: tokenBounce 0.55s ease-in-out infinite alternate;
+  box-shadow:
+    0 0 0 3px white,
+    0 0 10px rgba(255, 255, 255, 0.6),
+    0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.tokenValid:hover>div {
+  transform: scale(1.15);
+  box-shadow:
+    0 0 0 3px white,
+    0 0 16px rgba(255, 255, 255, 0.9),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes tokenBounce {
+  from {
+    transform: scale(1.0);
+  }
+
+  to {
+    transform: scale(1.12);
+  }
+}
