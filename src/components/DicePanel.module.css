@@ -95,25 +95,51 @@
     border: 1px solid #ccc;
     border-radius: 12px;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    grid-template-areas:
-        "a . c"
-        "e g f"
-        "d . b";
-    padding: 10px;
-    gap: 4px;
+    box-sizing: border-box;
 }
 
 .dot {
+    position: absolute;
     width: 12px;
     height: 12px;
     background-color: #222;
     border-radius: 50%;
     box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(255, 255, 255, 0.8);
-    justify-self: center;
-    align-self: center;
+}
+
+.posA {
+    top: 8px;
+    left: 8px;
+}
+
+.posC {
+    top: 8px;
+    left: 38px;
+}
+
+.posE {
+    top: 23px;
+    left: 8px;
+}
+
+.posG {
+    top: 23px;
+    left: 23px;
+}
+
+.posF {
+    top: 23px;
+    left: 38px;
+}
+
+.posD {
+    top: 38px;
+    left: 8px;
+}
+
+.posB {
+    top: 38px;
+    left: 38px;
 }
 
 .face1 {
@@ -142,27 +168,47 @@
 
 /* Rotations for showing faces to camera */
 .show1 {
-    transform: rotateY(0deg) rotateX(-15deg);
+    transform: rotateY(0deg) rotateX(0deg);
 }
 
 .show2 {
-    transform: rotateX(180deg) rotateZ(15deg);
+    transform: rotateX(180deg) rotateZ(0deg);
 }
 
 .show3 {
-    transform: rotateY(-90deg) rotateZ(-15deg);
+    transform: rotateY(-90deg) rotateZ(0deg);
 }
 
 .show4 {
-    transform: rotateY(90deg) rotateX(15deg);
+    transform: rotateY(90deg) rotateX(0deg);
 }
 
 .show5 {
-    transform: rotateX(-90deg) rotateY(15deg);
+    transform: rotateX(-90deg) rotateY(0deg);
 }
 
 .show6 {
-    transform: rotateX(90deg) rotateY(-15deg);
+    transform: rotateX(90deg) rotateY(0deg);
+}
+
+.show2 {
+    transform: rotateX(180deg) rotateZ(0deg);
+}
+
+.show3 {
+    transform: rotateY(-90deg) rotateZ(0deg);
+}
+
+.show4 {
+    transform: rotateY(90deg) rotateX(0deg);
+}
+
+.show5 {
+    transform: rotateX(-90deg) rotateY(0deg);
+}
+
+.show6 {
+    transform: rotateX(90deg) rotateY(0deg);
 }
 
 .diceNumber {

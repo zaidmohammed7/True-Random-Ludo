@@ -76,37 +76,37 @@ export default function DicePanel({
                 <div className={`${styles.diceWrapper} ${rolling ? styles.rolling : ''}`}>
                     <div className={`${styles.diceCube} ${rolling ? styles.rolling : styles['show' + (diceValue || 1)]}`}>
                         <div className={`${styles.diceFace} ${styles.face1}`}>
-                            <span className={styles.dot} style={{ gridArea: 'g' }} />
+                            <span className={`${styles.dot} ${styles.posG}`} />
                         </div>
                         <div className={`${styles.diceFace} ${styles.face2}`}>
-                            <span className={styles.dot} style={{ gridArea: 'a' }} />
-                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                            <span className={`${styles.dot} ${styles.posA}`} />
+                            <span className={`${styles.dot} ${styles.posB}`} />
                         </div>
                         <div className={`${styles.diceFace} ${styles.face3}`}>
-                            <span className={styles.dot} style={{ gridArea: 'a' }} />
-                            <span className={styles.dot} style={{ gridArea: 'g' }} />
-                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                            <span className={`${styles.dot} ${styles.posA}`} />
+                            <span className={`${styles.dot} ${styles.posG}`} />
+                            <span className={`${styles.dot} ${styles.posB}`} />
                         </div>
                         <div className={`${styles.diceFace} ${styles.face4}`}>
-                            <span className={styles.dot} style={{ gridArea: 'a' }} />
-                            <span className={styles.dot} style={{ gridArea: 'c' }} />
-                            <span className={styles.dot} style={{ gridArea: 'd' }} />
-                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                            <span className={`${styles.dot} ${styles.posA}`} />
+                            <span className={`${styles.dot} ${styles.posC}`} />
+                            <span className={`${styles.dot} ${styles.posD}`} />
+                            <span className={`${styles.dot} ${styles.posB}`} />
                         </div>
                         <div className={`${styles.diceFace} ${styles.face5}`}>
-                            <span className={styles.dot} style={{ gridArea: 'a' }} />
-                            <span className={styles.dot} style={{ gridArea: 'c' }} />
-                            <span className={styles.dot} style={{ gridArea: 'g' }} />
-                            <span className={styles.dot} style={{ gridArea: 'd' }} />
-                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                            <span className={`${styles.dot} ${styles.posA}`} />
+                            <span className={`${styles.dot} ${styles.posC}`} />
+                            <span className={`${styles.dot} ${styles.posG}`} />
+                            <span className={`${styles.dot} ${styles.posD}`} />
+                            <span className={`${styles.dot} ${styles.posB}`} />
                         </div>
                         <div className={`${styles.diceFace} ${styles.face6}`}>
-                            <span className={styles.dot} style={{ gridArea: 'a' }} />
-                            <span className={styles.dot} style={{ gridArea: 'e' }} />
-                            <span className={styles.dot} style={{ gridArea: 'd' }} />
-                            <span className={styles.dot} style={{ gridArea: 'c' }} />
-                            <span className={styles.dot} style={{ gridArea: 'f' }} />
-                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                            <span className={`${styles.dot} ${styles.posA}`} />
+                            <span className={`${styles.dot} ${styles.posE}`} />
+                            <span className={`${styles.dot} ${styles.posD}`} />
+                            <span className={`${styles.dot} ${styles.posC}`} />
+                            <span className={`${styles.dot} ${styles.posF}`} />
+                            <span className={`${styles.dot} ${styles.posB}`} />
                         </div>
                     </div>
                 </div>
