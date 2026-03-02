@@ -31,14 +31,22 @@ export default function DicePanel({
     isMyTurn
 }) {
     const [rolling, setRolling] = useState(false);
+    const [rollingFace, setRollingFace] = useState(null);
 
     function handleRoll(e, customVal) {
         if (phase !== 'roll' || rolling) return;
         setRolling(true);
+
+        const cycle = setInterval(() => {
+            setRollingFace(Math.floor(Math.random() * 6) + 1);
+        }, 50);
+
         setTimeout(() => {
+            clearInterval(cycle);
+            setRollingFace(null);
             onRoll(customVal || null);
             setRolling(false);
-        }, 400);
+        }, 600);
     }
 
     const color = COLOR_MAP[currentPlayer];
@@ -63,15 +71,50 @@ export default function DicePanel({
                 ))}
             </div>
 
-            {/* Dice */}
-            <div className={`${styles.diceContainer} ${rolling ? styles.rolling : ''}`}>
-                <div className={styles.diceFace}>
-                    {diceValue ? DICE_FACES[diceValue] : '🎲'}
+            {/* 3D Dice Scene */}
+            <div className={styles.diceScene}>
+                <div className={`${styles.diceWrapper} ${rolling ? styles.rolling : ''}`}>
+                    <div className={`${styles.diceCube} ${rolling ? styles.rolling : styles['show' + (diceValue || 1)]}`}>
+                        <div className={`${styles.diceFace} ${styles.face1}`}>
+                            <span className={styles.dot} style={{ gridArea: 'g' }} />
+                        </div>
+                        <div className={`${styles.diceFace} ${styles.face2}`}>
+                            <span className={styles.dot} style={{ gridArea: 'a' }} />
+                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                        </div>
+                        <div className={`${styles.diceFace} ${styles.face3}`}>
+                            <span className={styles.dot} style={{ gridArea: 'a' }} />
+                            <span className={styles.dot} style={{ gridArea: 'g' }} />
+                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                        </div>
+                        <div className={`${styles.diceFace} ${styles.face4}`}>
+                            <span className={styles.dot} style={{ gridArea: 'a' }} />
+                            <span className={styles.dot} style={{ gridArea: 'c' }} />
+                            <span className={styles.dot} style={{ gridArea: 'd' }} />
+                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                        </div>
+                        <div className={`${styles.diceFace} ${styles.face5}`}>
+                            <span className={styles.dot} style={{ gridArea: 'a' }} />
+                            <span className={styles.dot} style={{ gridArea: 'c' }} />
+                            <span className={styles.dot} style={{ gridArea: 'g' }} />
+                            <span className={styles.dot} style={{ gridArea: 'd' }} />
+                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                        </div>
+                        <div className={`${styles.diceFace} ${styles.face6}`}>
+                            <span className={styles.dot} style={{ gridArea: 'a' }} />
+                            <span className={styles.dot} style={{ gridArea: 'e' }} />
+                            <span className={styles.dot} style={{ gridArea: 'd' }} />
+                            <span className={styles.dot} style={{ gridArea: 'c' }} />
+                            <span className={styles.dot} style={{ gridArea: 'f' }} />
+                            <span className={styles.dot} style={{ gridArea: 'b' }} />
+                        </div>
+                    </div>
                 </div>
-                {diceValue && (
-                    <div className={styles.diceNumber}>{diceValue}</div>
-                )}
             </div>
+
+            {diceValue && !rolling && (
+                <div className={styles.diceNumber}>{diceValue}</div>
+            )}
 
             {/* Consecutive 6s warning */}
             {consecutiveSixes > 0 && (

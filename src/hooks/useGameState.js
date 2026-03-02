@@ -185,11 +185,11 @@ export function useGameState(players) {
         dispatch({ type: 'ANIMATE_START' });
 
         const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        const PER_SQUARE_MS = 250;
+        const PER_SQUARE_MS = 150;
 
         if (startStep === 0) {
-            dispatch({ type: 'ANIMATE_STEP', tokenId, newStep: 1, duration: 0.3 });
-            await delay(300);
+            dispatch({ type: 'ANIMATE_STEP', tokenId, newStep: 1, duration: 0.2 });
+            await delay(200);
         } else {
             let current = startStep;
             while (current < newStep) {
