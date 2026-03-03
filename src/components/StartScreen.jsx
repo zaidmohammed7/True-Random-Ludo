@@ -18,6 +18,12 @@ export default function StartScreen({ onStart, multi }) {
     // This maps peerId -> { isHost: boolean, ready: boolean, colors: [] }
     const [lobby, setLobby] = useState({});
 
+    // Names for each chosen color
+    const [colorNames, setColorNames] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('ludo_color_names')) || {}; }
+        catch { return {}; }
+    });
+
     // The lobby state is derived from local selections if Pass & Play,
     // or synced over the network if Host/Guest.
 
@@ -38,6 +44,7 @@ export default function StartScreen({ onStart, multi }) {
                     multi.sendAction({ type: 'SYNC_LOBBY', lobby: newLobby });
                     return newLobby;
                 });
+                multi.sendAction({ type: 'SYNC_NAMES', colorNames });
             }
             else if (act.type === 'PEER_DISCONNECT') {
                 setLobby(prev => {
@@ -76,17 +83,32 @@ export default function StartScreen({ onStart, multi }) {
                     return newLobby;
                 });
             }
+            else if (act.type === 'SET_NAME' && act._from) {
+                setColorNames(prev => {
+                    const next = { ...prev, [act.color]: act.name };
+                    localStorage.setItem('ludo_color_names', JSON.stringify(next));
+                    multi.sendAction({ type: 'SYNC_NAMES', colorNames: next });
+                    return next;
+                });
+            }
         }
         // As GUEST
         else if (multi.mode === 'guest') {
             if (act.type === 'SYNC_LOBBY') {
                 setLobby(act.lobby);
             }
+            if (act.type === 'SYNC_NAMES') {
+                setColorNames(act.colorNames);
+                localStorage.setItem('ludo_color_names', JSON.stringify(act.colorNames));
+            }
             if (act.type === 'START_GAME') {
                 const myLobbyProfile = act.lobby[multi.myPeerId] || { colors: [] };
+                setColorNames(act.colorNames);
+                localStorage.setItem('ludo_color_names', JSON.stringify(act.colorNames));
                 onStart({
                     selectedColors: act.players,
                     localColors: myLobbyProfile.colors,
+                    colorNames: act.colorNames
                 });
             }
         }
@@ -123,12 +145,22 @@ export default function StartScreen({ onStart, multi }) {
         const orderedPlayers = ALL_COLORS.map(c => c.id).filter(id => allClaimedColors.includes(id));
 
         if (multi.mode === 'host') {
-            multi.sendAction({ type: 'START_GAME', players: orderedPlayers, lobby });
+            multi.sendAction({ type: 'START_GAME', players: orderedPlayers, lobby, colorNames });
+            localStorage.setItem('ludo_was_host', 'true');
+            localStorage.setItem('ludo_cached_roomcode', multi.roomCode);
+        } else if (multi.mode === 'guest') {
+            localStorage.setItem('ludo_was_guest', 'true');
+            localStorage.setItem('ludo_cached_roomcode', multi.roomCode);
+        } else {
+            localStorage.removeItem('ludo_was_host');
+            localStorage.removeItem('ludo_was_guest');
+            localStorage.removeItem('ludo_cached_roomcode');
         }
 
         onStart({
             selectedColors: orderedPlayers,
-            localColors: lobby[myId]?.colors || []
+            localColors: lobby[myId]?.colors || [],
+            colorNames
         });
     }
 
@@ -250,28 +282,52 @@ export default function StartScreen({ onStart, multi }) {
                                     const takenByOther = claimerEntry && claimerEntry[0] !== String(myId);
 
                                     const isClickable = !takenByOther && (!amIReady || multi.mode !== 'guest');
+                                    const myColorName = colorNames[id] || '';
 
                                     return (
-                                        <button
-                                            key={id}
-                                            className={`${styles.colorBtn} ${takenByMe ? styles.active : ''}`}
-                                            onClick={() => {
-                                                if (isClickable) toggleColor(id);
-                                            }}
-                                            style={{
-                                                '--btn-color': hex,
-                                                filter: takenByOther ? 'grayscale(100%) opacity(0.2)' : 'none',
-                                                boxShadow: takenByMe ? `0 0 0 3px ${hex}, 0 0 15px ${hex}` : 'none',
-                                                cursor: isClickable ? 'pointer' : 'not-allowed',
-                                                transform: takenByMe ? 'scale(1.05)' : 'none',
-                                                transition: 'all 0.2s',
-                                                border: takenByMe ? `2px solid #fff` : `2px solid transparent`
-                                            }}
-                                        >
-                                            <div className={styles.tokenVisual} style={{ background: hex, borderColor: border }} />
-                                            <span>{label}</span>
-                                            {takenByOther && <span style={{ fontSize: '0.6rem', color: '#e74c3c' }}>Taken</span>}
-                                        </button>
+                                        <div key={id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <button
+                                                className={`${styles.colorBtn} ${takenByMe ? styles.active : ''}`}
+                                                onClick={() => {
+                                                    if (isClickable) toggleColor(id);
+                                                }}
+                                                style={{
+                                                    '--btn-color': hex,
+                                                    filter: takenByOther ? 'grayscale(100%) opacity(0.2)' : 'none',
+                                                    boxShadow: takenByMe ? `0 0 0 3px ${hex}, 0 0 15px ${hex}` : 'none',
+                                                    cursor: isClickable ? 'pointer' : 'not-allowed',
+                                                    transform: takenByMe ? 'scale(1.05)' : 'none',
+                                                    transition: 'all 0.2s',
+                                                    border: takenByMe ? `2px solid #fff` : `2px solid transparent`
+                                                }}
+                                            >
+                                                <div className={styles.tokenVisual} style={{ background: hex, borderColor: border }} />
+                                                <span>{label}</span>
+                                                {takenByOther && <span style={{ fontSize: '0.6rem', color: '#e74c3c' }}>Taken</span>}
+                                            </button>
+
+                                            {takenByMe && (
+                                                <input
+                                                    type="text"
+                                                    placeholder="Name..."
+                                                    value={myColorName}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value.substring(0, 10);
+                                                        setColorNames(prev => {
+                                                            const next = { ...prev, [id]: val };
+                                                            localStorage.setItem('ludo_color_names', JSON.stringify(next));
+                                                            if (multi.mode === 'guest') {
+                                                                multi.sendAction({ type: 'SET_NAME', color: id, name: val });
+                                                            } else if (multi.mode === 'host' || multi.mode === 'local') {
+                                                                multi.sendAction({ type: 'SYNC_NAMES', colorNames: next });
+                                                            }
+                                                            return next;
+                                                        });
+                                                    }}
+                                                    style={{ width: '100%', padding: '4px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(0,0,0,0.4)', color: 'white', textAlign: 'center', fontSize: '0.8rem' }}
+                                                />
+                                            )}
+                                        </div>
                                     );
                                 })}
                             </div>

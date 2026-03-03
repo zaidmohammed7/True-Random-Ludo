@@ -8,7 +8,7 @@ import { useMultiplayer } from './hooks/useMultiplayer';
 import styles from './App.module.css';
 
 function Game({ gameConfig, multi, onRestart }) {
-  const { initialPlayers, localColors } = gameConfig;
+  const { initialPlayers, localColors, colorNames = {} } = gameConfig;
   const { state, roll, moveToken, reset } = useGameState(initialPlayers);
 
   // Sync networking for active Game
@@ -49,8 +49,13 @@ function Game({ gameConfig, multi, onRestart }) {
     <div className={styles.gameLayout}>
       <header className={styles.header}>
         <div className={styles.logo}>♟ LUDO</div>
+        {multi.mode !== 'local' && multi.roomCode && (
+          <div style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 'bold', fontSize: '1rem', background: 'rgba(255,255,255,0.1)', padding: '6px 16px', borderRadius: '12px' }}>
+            Room Code: <span style={{ color: '#f1c40f', letterSpacing: '1px' }}>{multi.roomCode.toUpperCase()}</span>
+          </div>
+        )}
         <button className={styles.menuBtn} onClick={handleRestart}>
-          ☰ New Game
+          ☰ Quit
         </button>
       </header>
 
@@ -64,6 +69,7 @@ function Game({ gameConfig, multi, onRestart }) {
         <aside className={styles.sidebar}>
           <DicePanel
             currentPlayer={currentColor}
+            playerName={colorNames[currentColor]}
             diceValue={state.diceValue}
             phase={state.phase}
             consecutiveSixes={state.consecutiveSixes}
@@ -98,13 +104,51 @@ function Game({ gameConfig, multi, onRestart }) {
 
 export default function App() {
   const multi = useMultiplayer();
-  const [gameConfig, setGameConfig] = useState(null);
+  const [gameConfig, setGameConfig] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ludoConfig_cache');
+      if (saved) return JSON.parse(saved);
+    } catch { }
+    return null;
+  });
+
+  useEffect(() => {
+    if (gameConfig) {
+      localStorage.setItem('ludoConfig_cache', JSON.stringify({
+        initialPlayers: gameConfig.initialPlayers,
+        localColors: gameConfig.localColors,
+        colorNames: gameConfig.colorNames
+      }));
+    } else {
+      localStorage.removeItem('ludoConfig_cache');
+      localStorage.removeItem('ludo_game_state_cache');
+    }
+  }, [gameConfig]);
 
   if (!gameConfig) {
     return <StartScreen multi={multi} onStart={(config) => {
-      setGameConfig({ initialPlayers: config.selectedColors, localColors: config.localColors, multi });
+      setGameConfig({
+        initialPlayers: config.selectedColors,
+        localColors: config.localColors,
+        colorNames: config.colorNames || {}
+      });
     }} />;
   }
+
+  // Attempt to reconnect to a cached host lobby dynamically (for guests reloading)
+  useEffect(() => {
+    if (gameConfig && multi.status === 'disconnected') {
+      const savedRoom = localStorage.getItem('ludo_cached_roomcode');
+      if (savedRoom) {
+        if (localStorage.getItem('ludo_was_host') === 'true') {
+          // We can't trivially resume hosting the same peer ID via random re-init in PeerJS right now,
+          // so we will just let them play local or they need to issue a new invite
+        } else if (localStorage.getItem('ludo_was_guest') === 'true') {
+          multi.joinGame(savedRoom);
+        }
+      }
+    }
+  }, [gameConfig, multi]);
 
   return (
     <Game
@@ -113,6 +157,11 @@ export default function App() {
       multi={multi}
       onRestart={() => {
         multi.disconnect();
+        localStorage.removeItem('ludoConfig_cache');
+        localStorage.removeItem('ludo_game_state_cache');
+        localStorage.removeItem('ludo_cached_roomcode');
+        localStorage.removeItem('ludo_was_host');
+        localStorage.removeItem('ludo_was_guest');
         setGameConfig(null);
       }}
     />

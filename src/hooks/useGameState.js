@@ -160,7 +160,20 @@ function gameReducer(state, action) {
 
 // ─── Hook ──────────────────────────────────────────────────────────────────────
 export function useGameState(players) {
-    const [state, dispatch] = useReducer(gameReducer, players, createInitialState);
+    const [state, dispatch] = useReducer(gameReducer, players, (p) => {
+        try {
+            const saved = localStorage.getItem('ludo_game_state_cache');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.players && parsed.players.join() === p.join()) return parsed;
+            }
+        } catch (e) { }
+        return createInitialState(p);
+    });
+
+    useEffect(() => {
+        localStorage.setItem('ludo_game_state_cache', JSON.stringify(state));
+    }, [state]);
 
     const roll = useCallback((customValue) => {
         if (state.phase === 'roll') {

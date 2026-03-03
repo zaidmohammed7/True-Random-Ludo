@@ -103,11 +103,12 @@
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .main {
         flex-direction: column;
         align-items: center;
-        padding: 12px;
+        padding: 5px;
+        gap: 12px;
     }
 
     .sidebar {
@@ -117,9 +118,22 @@
         width: 100%;
         position: static;
         flex-wrap: wrap;
+        justify-content: center;
     }
 
     .rulesCard {
         display: none;
+    }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+    .main {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .sidebar {
+        flex-direction: column;
+        width: auto;
     }
 }

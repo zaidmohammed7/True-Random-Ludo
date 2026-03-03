@@ -21,6 +21,7 @@ const COLOR_MAP = {
 
 export default function DicePanel({
     currentPlayer,
+    playerName,
     diceValue,
     phase,
     consecutiveSixes,
@@ -57,7 +58,7 @@ export default function DicePanel({
             {/* Player Indicator */}
             <div className={styles.playerBadge}>
                 <div className={styles.playerDot} />
-                <span className={styles.playerLabel}>{COLOR_LABELS[currentPlayer]}'s Turn</span>
+                <span className={styles.playerLabel}>{playerName || COLOR_LABELS[currentPlayer]}'s Turn</span>
             </div>
 
             {/* Turn order strip */}
