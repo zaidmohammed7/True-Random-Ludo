@@ -125,16 +125,6 @@ export default function App() {
     }
   }, [gameConfig]);
 
-  if (!gameConfig) {
-    return <StartScreen multi={multi} onStart={(config) => {
-      setGameConfig({
-        initialPlayers: config.selectedColors,
-        localColors: config.localColors,
-        colorNames: config.colorNames || {}
-      });
-    }} />;
-  }
-
   // Attempt to reconnect to a cached host lobby dynamically (for guests reloading)
   useEffect(() => {
     if (gameConfig && multi.status === 'disconnected') {
@@ -149,6 +139,16 @@ export default function App() {
       }
     }
   }, [gameConfig, multi]);
+
+  if (!gameConfig) {
+    return <StartScreen multi={multi} onStart={(config) => {
+      setGameConfig({
+        initialPlayers: config.selectedColors,
+        localColors: config.localColors,
+        colorNames: config.colorNames || {}
+      });
+    }} />;
+  }
 
   return (
     <Game
