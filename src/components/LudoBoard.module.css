@@ -9,13 +9,17 @@
     justify-content: center;
     align-items: center;
 
-    /*
-   * Use the SMALLER of the two viewport dimensions so the board always
-   * fits without scrolling on both portrait and landscape screens.
-   */
-    width: min(95vw, 60vh, 660px);
-    height: min(95vw, 60vh, 660px);
-    /* explicit height = width → square wrapper */
+    /* Base: usually portrait or small windows */
+    width: min(98vw, 78vh, 660px);
+    height: min(98vw, 78vh, 660px);
+}
+
+@media (orientation: landscape) {
+    .boardWrapper {
+        /* In landscape, prioritize screen height but leave horizontal room for sidebar */
+        width: min(95vh, calc(100vw - 320px), 850px);
+        height: min(95vh, calc(100vw - 320px), 850px);
+    }
 }
 
 /* ── 2. Board grid ──────────────────────────────────────────────────────── */

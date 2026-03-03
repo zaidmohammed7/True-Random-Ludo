@@ -72,90 +72,77 @@ export default function DicePanel({
                 ))}
             </div>
 
-            {/* 3D Dice Scene */}
-            <div className={styles.diceScene}>
-                <div className={`${styles.diceWrapper} ${rolling ? styles.rolling : ''}`}>
-                    <div className={`${styles.diceCube} ${rolling ? styles.rolling : styles['show' + (diceValue || 1)]}`}>
-                        <div className={`${styles.diceFace} ${styles.face1}`}>
-                            <span className={`${styles.dot} ${styles.posG}`} />
-                        </div>
-                        <div className={`${styles.diceFace} ${styles.face2}`}>
-                            <span className={`${styles.dot} ${styles.posA}`} />
-                            <span className={`${styles.dot} ${styles.posB}`} />
-                        </div>
-                        <div className={`${styles.diceFace} ${styles.face3}`}>
-                            <span className={`${styles.dot} ${styles.posA}`} />
-                            <span className={`${styles.dot} ${styles.posG}`} />
-                            <span className={`${styles.dot} ${styles.posB}`} />
-                        </div>
-                        <div className={`${styles.diceFace} ${styles.face4}`}>
-                            <span className={`${styles.dot} ${styles.posA}`} />
-                            <span className={`${styles.dot} ${styles.posC}`} />
-                            <span className={`${styles.dot} ${styles.posD}`} />
-                            <span className={`${styles.dot} ${styles.posB}`} />
-                        </div>
-                        <div className={`${styles.diceFace} ${styles.face5}`}>
-                            <span className={`${styles.dot} ${styles.posA}`} />
-                            <span className={`${styles.dot} ${styles.posC}`} />
-                            <span className={`${styles.dot} ${styles.posG}`} />
-                            <span className={`${styles.dot} ${styles.posD}`} />
-                            <span className={`${styles.dot} ${styles.posB}`} />
-                        </div>
-                        <div className={`${styles.diceFace} ${styles.face6}`}>
-                            <span className={`${styles.dot} ${styles.posA}`} />
-                            <span className={`${styles.dot} ${styles.posE}`} />
-                            <span className={`${styles.dot} ${styles.posD}`} />
-                            <span className={`${styles.dot} ${styles.posC}`} />
-                            <span className={`${styles.dot} ${styles.posF}`} />
-                            <span className={`${styles.dot} ${styles.posB}`} />
+            <div className={styles.interactiveRow}>
+                {/* 3D Dice Scene */}
+                <div className={styles.diceScene}>
+                    <div className={`${styles.diceWrapper} ${rolling ? styles.rolling : ''}`}>
+                        <div className={`${styles.diceCube} ${rolling ? styles.rolling : styles['show' + (diceValue || 1)]}`}>
+                            <div className={`${styles.diceFace} ${styles.face1}`}>
+                                <span className={`${styles.dot} ${styles.posG}`} />
+                            </div>
+                            <div className={`${styles.diceFace} ${styles.face2}`}>
+                                <span className={`${styles.dot} ${styles.posA}`} />
+                                <span className={`${styles.dot} ${styles.posB}`} />
+                            </div>
+                            <div className={`${styles.diceFace} ${styles.face3}`}>
+                                <span className={`${styles.dot} ${styles.posA}`} />
+                                <span className={`${styles.dot} ${styles.posG}`} />
+                                <span className={`${styles.dot} ${styles.posB}`} />
+                            </div>
+                            <div className={`${styles.diceFace} ${styles.face4}`}>
+                                <span className={`${styles.dot} ${styles.posA}`} />
+                                <span className={`${styles.dot} ${styles.posC}`} />
+                                <span className={`${styles.dot} ${styles.posD}`} />
+                                <span className={`${styles.dot} ${styles.posB}`} />
+                            </div>
+                            <div className={`${styles.diceFace} ${styles.face5}`}>
+                                <span className={`${styles.dot} ${styles.posA}`} />
+                                <span className={`${styles.dot} ${styles.posC}`} />
+                                <span className={`${styles.dot} ${styles.posG}`} />
+                                <span className={`${styles.dot} ${styles.posD}`} />
+                                <span className={`${styles.dot} ${styles.posB}`} />
+                            </div>
+                            <div className={`${styles.diceFace} ${styles.face6}`}>
+                                <span className={`${styles.dot} ${styles.posA}`} />
+                                <span className={`${styles.dot} ${styles.posE}`} />
+                                <span className={`${styles.dot} ${styles.posD}`} />
+                                <span className={`${styles.dot} ${styles.posC}`} />
+                                <span className={`${styles.dot} ${styles.posF}`} />
+                                <span className={`${styles.dot} ${styles.posB}`} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {diceValue && !rolling && (
-                <div className={styles.diceNumber}>{diceValue}</div>
-            )}
+                <div className={styles.actionCol}>
+                    {/* Consecutive 6s warning */}
+                    {consecutiveSixes > 0 && (
+                        <div className={styles.sixsWarning}>
+                            {consecutiveSixes === 1 && '⚠️ One 6 in a row'}
+                            {consecutiveSixes === 2 && '🚨 Two 6s in a row!'}
+                        </div>
+                    )}
 
-            {/* Consecutive 6s warning */}
-            {consecutiveSixes > 0 && (
-                <div className={styles.sixsWarning}>
-                    {consecutiveSixes === 1 && '⚠️ One 6 in a row'}
-                    {consecutiveSixes === 2 && '🚨 Two 6s in a row! Next 6 forfeits!'}
+                    {/* Extra turn badge */}
+                    {extraTurn && (
+                        <div className={styles.extraTurnBadge}>🎯 Extra Turn!</div>
+                    )}
+
+                    {/* Roll button */}
+                    {!isMyTurn ? (
+                        <div style={{ background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '8px', textAlign: 'center', color: '#bdc3c7', fontWeight: 'bold', fontSize: '0.85rem' }}>
+                            Waiting for opponent...
+                        </div>
+                    ) : (
+                        <button
+                            className={`${styles.rollBtn} ${!canRoll ? styles.disabled : ''}`}
+                            onClick={handleRoll}
+                            disabled={!canRoll}
+                        >
+                            {rolling ? 'Rolling…' : phase === 'move' ? 'Move Token' : 'Roll Dice 🎲'}
+                        </button>
+                    )}
                 </div>
-            )}
-
-            {/* Extra turn badge */}
-            {extraTurn && (
-                <div className={styles.extraTurnBadge}>🎯 Extra Turn!</div>
-            )}
-
-            {/* Last message */}
-            {lastMessage && (
-                <div className={styles.message}>{lastMessage}</div>
-            )}
-
-            {/* Roll button */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {!isMyTurn ? (
-                    <div style={{ background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '8px', textAlign: 'center', color: '#bdc3c7', fontWeight: 'bold' }}>
-                        Waiting for opponent...
-                    </div>
-                ) : (
-                    <button
-                        className={`${styles.rollBtn} ${!canRoll ? styles.disabled : ''}`}
-                        onClick={handleRoll}
-                        disabled={!canRoll}
-                    >
-                        {rolling ? 'Rolling…' : phase === 'move' ? 'Select a Token' : 'Roll Dice 🎲'}
-                    </button>
-                )}
-            </div>
-
-            {/* Phase hint */}
-            <div className={styles.phaseHint}>
-                {phase === 'roll' && 'Click Roll Dice to begin your turn'}
-                {phase === 'move' && 'Click a highlighted token to move it'}
             </div>
         </div>
     );
