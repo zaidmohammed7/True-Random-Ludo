@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/True-Random-Ludo/sw.js', { scope: '/True-Random-Ludo/' })})}
