@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/True-Random-Ludo/dev-sw.js?dev-sw', { scope: '/True-Random-Ludo/', type: 'classic' })

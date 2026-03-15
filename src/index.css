@@ -12,6 +12,10 @@
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+  /* Prevent pull-to-refresh on mobile */
+  -webkit-tap-highlight-color: transparent;
+  /* Remove tap highlights */
 }
 
 body {
@@ -19,8 +23,14 @@ body {
   background: #0f0f1a;
   color: #f0f0f0;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   overflow-x: hidden;
   line-height: 1.5;
+
+  /* App-like properties */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 
   /* Premium dark background with subtle radial gradient */
   background-image:
@@ -55,6 +65,17 @@ body {
 /* ─── Utilities ───────────────────────────────────────────────────────────────── */
 button {
   font-family: 'Outfit', sans-serif;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input,
+textarea,
+select {
+  -webkit-touch-callout: text;
+  -webkit-user-select: auto;
+  user-select: auto;
 }
 
 /* Smooth transitions globally */
